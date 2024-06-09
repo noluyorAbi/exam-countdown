@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import clsx from "clsx";
 
 interface Exam {
@@ -28,48 +28,58 @@ const parseDate = (dateString: string): Date => {
   return new Date(`${year}-${month}-${day}T${time}`);
 };
 
+// Calculate countdown
+const calculateCountdown = (date: Date): Countdown => {
+  const now = new Date();
+  const distance = date.getTime() - now.getTime();
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  return { days, hours, minutes, seconds };
+};
+
 export default function Home() {
-  const [countdowns, setCountdowns] = useState<Countdown[]>(
-    examDates.map(() => ({ days: 0, hours: 0, minutes: 0, seconds: 0 }))
-  );
-
+  const countdownRefs = useRef<(HTMLDivElement | null)[]>([]);
+  
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCountdowns(
-        examDates
-          .map(({ date }) => parseDate(date))
-          .map((date) => {
-            const now = new Date();
-            const distance = date.getTime() - now.getTime();
+    const updateCountdowns = () => {
+      examDates.forEach((exam, index) => {
+        const date = parseDate(exam.date);
+        const countdown = calculateCountdown(date);
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor(
-              (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-            );
-            const minutes = Math.floor(
-              (distance % (1000 * 60 * 60)) / (1000 * 60)
-            );
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        const countdownElement = countdownRefs.current[index];
+        if (countdownElement) {
+          const days = countdownElement.querySelector('.days');
+          const hours = countdownElement.querySelector('.hours');
+          const minutes = countdownElement.querySelector('.minutes');
+          const seconds = countdownElement.querySelector('.seconds');
 
-            return { days, hours, minutes, seconds };
-          })
-      );
-    }, 1000);
+          if (days) days.textContent = countdown.days.toString();
+          if (hours) hours.textContent = countdown.hours.toString();
+          if (minutes) minutes.textContent = countdown.minutes.toString();
+          if (seconds) seconds.textContent = countdown.seconds.toString();
+        }
+      });
 
-    return () => clearInterval(interval);
+      requestAnimationFrame(updateCountdowns);
+    };
+
+    const animationFrameId = requestAnimationFrame(updateCountdowns);
+
+    return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
   // Sort exams by date
-  const sortedExams = examDates
-    .map((exam, index) => ({ ...exam, countdown: countdowns[index] }))
-    .sort((a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime());
+  const sortedExams = examDates.sort((a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime());
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-transparent text-white bg-gray-600">
-      <div className="flex flex-col items-center justify-center p-12  rounded-xl  bg-gray-500 bg-opacity-20 backdrop-blur-lg  drop-shadow-lg">
+      <div className="flex flex-col items-center justify-center p-12 rounded-xl bg-gray-500 bg-opacity-20 backdrop-blur-lg drop-shadow-lg">
         {sortedExams.map((exam, index) => {
-          const timeLeft =
-            parseDate(exam.date).getTime() - new Date().getTime();
+          const timeLeft = parseDate(exam.date).getTime() - new Date().getTime();
           const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
           const isLessThan2Weeks = timeLeft <= 2 * 7 * 24 * 60 * 60 * 1000;
 
@@ -79,17 +89,19 @@ export default function Home() {
           });
 
           return (
-            <div key={index} className="mb-16 text-center w-full max-w-4xl">
+            <div
+              key={index}
+              className="mb-16 text-center w-full max-w-4xl"
+              ref={(el) => (countdownRefs.current[index] = el)}
+            >
               <h2 className={`mb-5 text-2xl font-semibold ${textClass}`}>
                 {exam.name}
               </h2>
               <div className="flex flex-wrap items-center justify-center w-full gap-4">
                 <div className="timer">
-                  <div
-                    className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
-                  >
+                  <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
                     <h3 className="countdown-element days font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                      {exam.countdown.days}
+                      {countdownRefs.current[index]?.querySelector('.days')?.textContent}
                     </h3>
                     <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                       Days
@@ -98,11 +110,9 @@ export default function Home() {
                 </div>
 
                 <div className="timer">
-                  <div
-                    className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
-                  >
+                  <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
                     <h3 className="countdown-element hours font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                      {exam.countdown.hours}
+                      {countdownRefs.current[index]?.querySelector('.hours')?.textContent}
                     </h3>
                     <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                       Hours
@@ -111,11 +121,9 @@ export default function Home() {
                 </div>
 
                 <div className="timer">
-                  <div
-                    className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
-                  >
+                  <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
                     <h3 className="countdown-element minutes font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                      {exam.countdown.minutes}
+                      {countdownRefs.current[index]?.querySelector('.minutes')?.textContent}
                     </h3>
                     <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                       Minutes
@@ -124,11 +132,9 @@ export default function Home() {
                 </div>
 
                 <div className="timer">
-                  <div
-                    className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
-                  >
+                  <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
                     <h3 className="countdown-element seconds font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                      {exam.countdown.seconds}
+                      {countdownRefs.current[index]?.querySelector('.seconds')?.textContent}
                     </h3>
                     <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                       Seconds
