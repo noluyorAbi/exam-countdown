@@ -43,7 +43,7 @@ const calculateCountdown = (date: Date): Countdown => {
 
 export default function Home() {
   const countdownRefs = useRef<(HTMLDivElement | null)[]>([]);
-  
+
   useEffect(() => {
     const updateCountdowns = () => {
       examDates.forEach((exam, index) => {
@@ -92,7 +92,9 @@ export default function Home() {
             <div
               key={index}
               className="mb-16 text-center w-full max-w-4xl"
-              ref={(el) => (countdownRefs.current[index] = el)}
+              ref={(el) => {
+                countdownRefs.current[index] = el;
+              }}
             >
               <h2 className={`mb-5 text-2xl font-semibold ${textClass}`}>
                 {exam.name}
@@ -101,7 +103,7 @@ export default function Home() {
                 <div className="timer">
                   <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
                     <h3 className="countdown-element days font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                      {countdownRefs.current[index]?.querySelector('.days')?.textContent}
+                      0
                     </h3>
                     <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                       Days
@@ -112,7 +114,7 @@ export default function Home() {
                 <div className="timer">
                   <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
                     <h3 className="countdown-element hours font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                      {countdownRefs.current[index]?.querySelector('.hours')?.textContent}
+                      0
                     </h3>
                     <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                       Hours
@@ -123,7 +125,7 @@ export default function Home() {
                 <div className="timer">
                   <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
                     <h3 className="countdown-element minutes font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                      {countdownRefs.current[index]?.querySelector('.minutes')?.textContent}
+                      0
                     </h3>
                     <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                       Minutes
@@ -134,7 +136,7 @@ export default function Home() {
                 <div className="timer">
                   <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
                     <h3 className="countdown-element seconds font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                      {countdownRefs.current[index]?.querySelector('.seconds')?.textContent}
+                      0
                     </h3>
                     <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                       Seconds
