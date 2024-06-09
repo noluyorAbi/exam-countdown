@@ -65,70 +65,81 @@ export default function Home() {
     .sort((a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime());
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 md:p-16 lg:p-24 bg-transparent text-black">
-      {sortedExams.map((exam, index) => {
-        const timeLeft = parseDate(exam.date).getTime() - new Date().getTime();
-        const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
-        const isLessThan2Weeks = timeLeft <= 2 * 7 * 24 * 60 * 60 * 1000;
+    <main className="flex flex-col items-center justify-center min-h-screen bg-transparent text-white bg-gray-600">
+      <div className="flex flex-col items-center justify-center p-12  rounded-xl  bg-gray-500 bg-opacity-20 backdrop-blur-lg  drop-shadow-lg">
+        {sortedExams.map((exam, index) => {
+          const timeLeft =
+            parseDate(exam.date).getTime() - new Date().getTime();
+          const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
+          const isLessThan2Weeks = timeLeft <= 2 * 7 * 24 * 60 * 60 * 1000;
 
-        const textClass = clsx({
-          "text-red-500": isLessThan4Weeks,
-          "animate-pulse": isLessThan2Weeks,
-        });
+          const textClass = clsx({
+            "text-red-500": isLessThan4Weeks,
+            "animate-pulse": isLessThan2Weeks,
+          });
 
-        return (
-          <div key={index} className="mb-16 text-center w-full max-w-4xl">
-            <h2 className={`mb-5 text-2xl font-semibold ${textClass}`}>
-              {exam.name}
-            </h2>
-            <div className="flex flex-wrap items-center justify-center w-full gap-4">
-              <div className="timer">
-                <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
-                  <h3 className="countdown-element days font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                    {exam.countdown.days}
-                  </h3>
-                  <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
-                    Days
-                  </p>
+          return (
+            <div key={index} className="mb-16 text-center w-full max-w-4xl">
+              <h2 className={`mb-5 text-2xl font-semibold ${textClass}`}>
+                {exam.name}
+              </h2>
+              <div className="flex flex-wrap items-center justify-center w-full gap-4">
+                <div className="timer">
+                  <div
+                    className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                  >
+                    <h3 className="countdown-element days font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
+                      {exam.countdown.days}
+                    </h3>
+                    <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
+                      Days
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="timer">
-                <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
-                  <h3 className="countdown-element hours font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                    {exam.countdown.hours}
-                  </h3>
-                  <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
-                    Hours
-                  </p>
+                <div className="timer">
+                  <div
+                    className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                  >
+                    <h3 className="countdown-element hours font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
+                      {exam.countdown.hours}
+                    </h3>
+                    <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
+                      Hours
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="timer">
-                <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
-                  <h3 className="countdown-element minutes font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                    {exam.countdown.minutes}
-                  </h3>
-                  <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
-                    Minutes
-                  </p>
+                <div className="timer">
+                  <div
+                    className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                  >
+                    <h3 className="countdown-element minutes font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
+                      {exam.countdown.minutes}
+                    </h3>
+                    <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
+                      Minutes
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="timer">
-                <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
-                  <h3 className="countdown-element seconds font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                    {exam.countdown.seconds}
-                  </h3>
-                  <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
-                    Seconds
-                  </p>
+                <div className="timer">
+                  <div
+                    className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                  >
+                    <h3 className="countdown-element seconds font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
+                      {exam.countdown.seconds}
+                    </h3>
+                    <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
+                      Seconds
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </main>
   );
 }
