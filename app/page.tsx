@@ -65,7 +65,7 @@ export default function Home() {
     .sort((a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime());
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 md:p-16 lg:p-24 bg-gray-900 text-gray-100">
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 md:p-16 lg:p-24 bg-transparent text-black">
       {sortedExams.map((exam, index) => {
         const timeLeft = parseDate(exam.date).getTime() - new Date().getTime();
         const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
