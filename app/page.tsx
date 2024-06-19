@@ -19,6 +19,7 @@ const examDates: Exam[] = [
   { name: "Bayes Statistik", date: "23.07.2024 10:00:00" },
   { name: "RNVS Exam", date: "26.07.2024 12:00:00" },
   { name: "BachelorSem", date: "28.06.2024 17:00:00" },
+  { name: "LiMo", date: "01.08.2024 12:15:00" },
 ];
 
 // Convert dates to JavaScript Date objects
