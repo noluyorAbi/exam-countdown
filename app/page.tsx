@@ -127,8 +127,8 @@ export default function Home() {
           usable by anyone. Add your Countdowns and see the countdown to each one.
         </p>
         <p className="mb-8 text-center text-gray-800">
-          Dates will be highlighted:
-          <span className="text-white font-bold "> white</span> for upcoming
+            Dates will be highlighted: {" "}
+          <span className="text-white font-bold px-2 bg-gray-400 ">white</span> for upcoming
           dates,
           <span className="text-red-500 "> red</span> when they are less than 4
           weeks away, and
