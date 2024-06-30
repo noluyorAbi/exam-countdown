@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from 'next/navigation';
 import clsx from "clsx";
+import Link from 'next/link';
+import { errorMessages } from './youCantEvenUseThisSimpleApp_lmao';
 
 interface Exam {
   name: string;
@@ -28,17 +30,28 @@ const calculateCountdown = (date: Date): Countdown => {
   return { days, hours, minutes, seconds };
 };
 
+const getRandomErrorMessage = () => {
+  const randomIndex = Math.floor(Math.random() * errorMessages.length);
+  console.log(randomIndex);
+  return errorMessages[randomIndex];
+};
+
 const CountdownPage = () => {
   const searchParams = useSearchParams();
   const countdownRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
   const [scale, setScale] = useState(1);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const encodedData = window.location.pathname.slice(1); // Extracting the encoded data from the URL
     if (encodedData) {
-      const decodedData = decodeURIComponent(encodedData);
-      setExams(JSON.parse(decodedData));
+      try {
+        const decodedData = decodeURIComponent(encodedData);
+        setExams(JSON.parse(decodedData));
+      } catch (e) {
+        setError(getRandomErrorMessage());
+      }
     }
   }, [searchParams]);
 
@@ -85,6 +98,20 @@ const CountdownPage = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [exams]);
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-700 text-white">
+        <h1 className="text-4xl font-bold mb-4">Error</h1>
+        <p className="text-lg mb-8 md:px-32 text-center">{error}</p>
+        <Link href="/">
+          <p className="p-3 rounded-md bg-blue-500 hover:bg-blue-700 transition-colors duration-300 ease-in-out text-white">
+            Go to Homepage
+          </p>
+        </Link>
+      </div>
+    );
+  }
 
   // Sort exams by date
   const sortedExams = exams.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());

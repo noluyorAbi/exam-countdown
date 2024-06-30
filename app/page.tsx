@@ -289,14 +289,14 @@ export default function Home() {
       </Modal>
       </main>
       <footer className="flex  bottom-0 sticky items-center justify-center p-4 bg-gray-700 text-white w-full">
-        <span className="retro-font">Created with ❤️ by noluyorAbi</span>
+        <span className="retro- cursor-default select-none">Created with <span className="hover:animate-pulse mx-1">❤️</span> by noluyorAbi</span>
         <a
           href="https://github.com/noluyorAbi"
           target="_blank"
           rel="noopener noreferrer"
           className="ml-2"
         >
-          <FaGithub size={24} />
+          <FaGithub size={24} className="hover:scale-110 transition duration-150" />
         </a>
       </footer>
     </>
