@@ -1,7 +1,5 @@
-// pages/[encodedData]/page.tsx
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from "react";
 import clsx from "clsx";
 
 interface Exam {
@@ -16,6 +14,21 @@ interface Countdown {
   seconds: number;
 }
 
+// Array with exam dates and times
+const examDates: Exam[] = [
+  { name: "Bayes Statistik", date: "23.07.2024 10:00:00" },
+  { name: "RNVS Exam", date: "26.07.2024 12:00:00" },
+  { name: "JWT-Paper", date: "05.07.2024 17:00:00" },
+  { name: "LiMo", date: "01.08.2024 12:15:00" },
+];
+
+// Convert dates to JavaScript Date objects
+const parseDate = (dateString: string): Date => {
+  const [day, month, yearAndTime] = dateString.split(".");
+  const [year, time] = yearAndTime.split(" ");
+  return new Date(`${year}-${month}-${day}T${time}`);
+};
+
 // Calculate countdown
 const calculateCountdown = (date: Date): Countdown => {
   const now = new Date();
@@ -29,23 +42,13 @@ const calculateCountdown = (date: Date): Countdown => {
   return { days, hours, minutes, seconds };
 };
 
-const CountdownPage = () => {
-  const searchParams = useSearchParams();
+export default function Home() {
   const countdownRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [exams, setExams] = useState<Exam[]>([]);
-
-  useEffect(() => {
-    const encodedData = window.location.pathname.slice(1); // Extracting the encoded data from the URL
-    if (encodedData) {
-      const decodedData = decodeURIComponent(encodedData);
-      setExams(JSON.parse(decodedData));
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     const updateCountdowns = () => {
-      exams.forEach((exam, index) => {
-        const date = new Date(exam.date);
+      examDates.forEach((exam, index) => {
+        const date = parseDate(exam.date);
         const countdown = calculateCountdown(date);
 
         const countdownElement = countdownRefs.current[index];
@@ -68,16 +71,16 @@ const CountdownPage = () => {
     const animationFrameId = requestAnimationFrame(updateCountdowns);
 
     return () => cancelAnimationFrame(animationFrameId);
-  }, [exams]);
+  }, []);
 
   // Sort exams by date
-  const sortedExams = exams.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sortedExams = examDates.sort((a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime());
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-transparent text-white bg-gray-600">
       <div className="flex flex-col items-center justify-center p-12 rounded-xl bg-gray-500 bg-opacity-20 backdrop-blur-lg drop-shadow-lg">
         {sortedExams.map((exam, index) => {
-          const timeLeft = new Date(exam.date).getTime() - new Date().getTime();
+          const timeLeft = parseDate(exam.date).getTime() - new Date().getTime();
           const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
           const isLessThan2Weeks = timeLeft <= 2 * 7 * 24 * 60 * 60 * 1000;
 
@@ -148,6 +151,4 @@ const CountdownPage = () => {
       </div>
     </main>
   );
-};
-
-export default CountdownPage;
+}
