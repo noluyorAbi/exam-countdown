@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Modal from "react-modal";
 import clsx from "clsx";
 import Link from "next/link";
+import { FaGithub } from "react-icons/fa";
 
 interface Countdown {
   name: string;
@@ -107,6 +108,7 @@ export default function Home() {
   );
 
   return (
+    <>
     <main className="flex flex-col items-center justify-center min-h-screen bg-transparent text-white bg-gray-600">
       <div className="flex flex-col items-center justify-center p-12 rounded-xl bg-gray-500 bg-opacity-20 backdrop-blur-lg drop-shadow-lg w-full max-w-4xl">
         <h1 className="text-4xl font-bold mb-4 text-gray-800">
@@ -222,9 +224,7 @@ export default function Home() {
                   </div>
                   <div className="timer">
                     <div
-                      className={`rounded-xl
-
- bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                      className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
                     >
                       <h3 className="countdown-element minutes font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
                         0
@@ -287,6 +287,18 @@ export default function Home() {
           Close
         </button>
       </Modal>
-    </main>
+      </main>
+      <footer className="flex  bottom-0 sticky items-center justify-center p-4 bg-gray-700 text-white w-full">
+        <span className="retro-font">Created with ❤️ by noluyorAbi</span>
+        <a
+          href="https://github.com/noluyorAbi"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-2"
+        >
+          <FaGithub size={24} />
+        </a>
+      </footer>
+    </>
   );
 }
