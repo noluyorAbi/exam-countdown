@@ -5,8 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Custom Countdown App",
-  description: "Create custom countdowns for any event and display them on your MacBook screen using the Plash app.",
+  title: "Decoded Countdown",
+  description:
+    "Create custom countdowns for any event and display them on your MacBook screen using the Plash app.",
 };
 
 export default function RootLayout({

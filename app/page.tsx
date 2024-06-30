@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 import clsx from "clsx";
 import Link from "next/link";
 
@@ -10,7 +10,7 @@ interface Countdown {
   date: string;
 }
 
-interface Countdown {
+interface CountdownTimer {
   days: number;
   hours: number;
   minutes: number;
@@ -18,20 +18,22 @@ interface Countdown {
 }
 
 // Calculate countdown
-const calculateCountdown = (date: Date): Countdown => {
+const calculateCountdown = (date: Date): CountdownTimer => {
   const now = new Date();
   const distance = date.getTime() - now.getTime();
 
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const hours = Math.floor(
+    (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
   const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  const seconds = Math.floor((distance % 60000) / 1000);
 
   return { days, hours, minutes, seconds };
 };
 
 // Set the app element for react-modal to the body element
-Modal.setAppElement('body');
+Modal.setAppElement("body");
 
 export default function Home() {
   const [Countdowns, setCountdowns] = useState<Countdown[]>([]);
@@ -51,10 +53,10 @@ export default function Home() {
 
         const countdownElement = countdownRefs.current[index];
         if (countdownElement) {
-          const days = countdownElement.querySelector('.days');
-          const hours = countdownElement.querySelector('.hours');
-          const minutes = countdownElement.querySelector('.minutes');
-          const seconds = countdownElement.querySelector('.seconds');
+          const days = countdownElement.querySelector(".days");
+          const hours = countdownElement.querySelector(".hours");
+          const minutes = countdownElement.querySelector(".minutes");
+          const seconds = countdownElement.querySelector(".seconds");
 
           if (days) days.textContent = countdown.days.toString();
           if (hours) hours.textContent = countdown.hours.toString();
@@ -100,20 +102,45 @@ export default function Home() {
   };
 
   // Sort Countdowns by date
-  const sortedCountdowns = Countdowns.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sortedCountdowns = Countdowns.sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-transparent text-white bg-gray-600">
       <div className="flex flex-col items-center justify-center p-12 rounded-xl bg-gray-500 bg-opacity-20 backdrop-blur-lg drop-shadow-lg w-full max-w-4xl">
-        <h1 className="text-4xl font-bold mb-4 text-gray-800">Welcome to the Countdown App!</h1>
+        <h1 className="text-4xl font-bold mb-4 text-gray-800">
+          Welcome to the Countdown App!
+        </h1>
         <p className="mb-8 text-center text-gray-800">
-          Add your exams and see the countdown to each one. Dates will be highlighted:
-          <span className="text-white font-bold "> white</span> for upcoming dates,
-          <span className="text-red-500 "> red</span> when they are less than 4 weeks away, and
-          <span className="text-red-500 animate-pulse"> pulsing red</span> when they are less than 2 weeks away.
-          Use the generated URL to share your countdowns or set it as a background on macOS using the <Link href={"https://github.com/sindresorhus/Plash"} className="text-blue-500 hover:text-blue-800">Plash</Link> app.
+          I wrote this simple web app to make a custom counter for my Exams and
+          display them on my MacBook screen with{" "}
+          <Link
+            href={"https://github.com/sindresorhus/Plash"}
+            className="text-blue-500 hover:text-blue-800"
+          >
+            Plash
+          </Link>
+          . Instead of hardcoding the Countdown dates in my code, I wanted to make it
+          usable by anyone. Add your Countdowns and see the countdown to each one.
         </p>
-        <form className="w-full mb-8 flex flex-col items-center" onSubmit={(e) => { e.preventDefault(); handleAddCountdown(); }}>
+        <p className="mb-8 text-center text-gray-800">
+          Dates will be highlighted:
+          <span className="text-white font-bold "> white</span> for upcoming
+          dates,
+          <span className="text-red-500 "> red</span> when they are less than 4
+          weeks away, and
+          <span className="text-red-500 animate-pulse"> pulsing red</span> when
+          they are less than 2 weeks away. Use the generated URL to share your
+          countdowns or set it as a background on macOS using the Plash app.
+        </p>
+        <form
+          className="w-full mb-8 flex flex-col items-center"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAddCountdown();
+          }}
+        >
           <input
             type="text"
             placeholder="Countdown Name"
@@ -121,7 +148,10 @@ export default function Home() {
             value={newCountdown.name}
             onChange={(e) => setNewCountdown({ ...newCountdown, name: e.target.value })}
           />
-          <div className="mb-4 p-2 rounded-md bg-gray-700 text-white cursor-pointer" onClick={handleDateInputClick}>
+          <div
+            className="mb-4 p-2 rounded-md bg-gray-700 text-white cursor-pointer"
+            onClick={handleDateInputClick}
+          >
             <input
               type="datetime-local"
               className="bg-transparent text-white w-full focus:outline-none cursor-pointer"
@@ -130,11 +160,17 @@ export default function Home() {
               ref={dateInputRef}
             />
           </div>
-          <button type="submit" className="mb-4 p-3 rounded-md bg-green-500 text-white">
+          <button
+            type="submit"
+            className="mb-4 p-3 rounded-md bg-green-500 text-white hover:bg-green-700 transition-colors duration-300 ease-in-out"
+          >
             Add Countdown
           </button>
         </form>
-        <button onClick={generateUrl} className="p-3 rounded-md bg-blue-500 text-white mb-10">
+        <button
+          onClick={generateUrl}
+          className="p-3 rounded-md bg-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-700 text-white mb-10"
+        >
           Generate URL
         </button>
         {sortedCountdowns.map((Countdown, index) => {
@@ -161,7 +197,9 @@ export default function Home() {
                 </h2>
                 <div className="flex flex-wrap items-center justify-center w-full gap-4">
                   <div className="timer">
-                    <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
+                    <div
+                      className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                    >
                       <h3 className="countdown-element days font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
                         0
                       </h3>
@@ -171,7 +209,9 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="timer">
-                    <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
+                    <div
+                      className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                    >
                       <h3 className="countdown-element hours font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
                         0
                       </h3>
@@ -181,7 +221,11 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="timer">
-                    <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
+                    <div
+                      className={`rounded-xl
+
+ bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                    >
                       <h3 className="countdown-element minutes font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
                         0
                       </h3>
@@ -191,7 +235,9 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="timer">
-                    <div className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}>
+                    <div
+                      className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                    >
                       <h3 className="countdown-element seconds font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
                         0
                       </h3>
@@ -202,7 +248,10 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <button onClick={() => handleDeleteCountdown(index)} className="ml-4 mt-4 p-2 rounded-md bg-red-500 text-white">
+              <button
+                onClick={() => handleDeleteCountdown(index)}
+                className="ml-4 mt-4 p-2 rounded-md bg-red-500 text-white"
+              >
                 Delete Countdown
               </button>
             </div>
@@ -225,11 +274,16 @@ export default function Home() {
         />
         <button
           onClick={copyToClipboard}
-          className={`p-2 rounded-md text-white ${copied ? 'bg-green-500' : 'bg-blue-500'}`}
+          className={`p-2 rounded-md text-white ${
+            copied ? "bg-green-500" : "bg-blue-500"
+          }`}
         >
-          {copied ? 'Successfully Copied ✓' : 'Copy to Clipboard'}
+          {copied ? "Successfully Copied ✓" : "Copy to Clipboard"}
         </button>
-        <button onClick={() => setModalIsOpen(false)} className="p-2 rounded-md bg-red-500 text-white ml-2">
+        <button
+          onClick={() => setModalIsOpen(false)}
+          className="p-2 rounded-md bg-red-500 text-white ml-2"
+        >
           Close
         </button>
       </Modal>

@@ -1,4 +1,3 @@
-// pages/[encodedData]/page.tsx
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from 'next/navigation';
@@ -24,7 +23,7 @@ const calculateCountdown = (date: Date): Countdown => {
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
   const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  const seconds = Math.floor((distance % 60000) / 1000);
 
   return { days, hours, minutes, seconds };
 };
@@ -33,6 +32,7 @@ const CountdownPage = () => {
   const searchParams = useSearchParams();
   const countdownRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     const encodedData = window.location.pathname.slice(1); // Extracting the encoded data from the URL
@@ -70,12 +70,28 @@ const CountdownPage = () => {
     return () => cancelAnimationFrame(animationFrameId);
   }, [exams]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const container = document.getElementById("countdown-container");
+      if (container) {
+        const containerHeight = container.getBoundingClientRect().height;
+        const viewportHeight = window.innerHeight;
+        const newScale = Math.min(1, viewportHeight / containerHeight);
+        setScale(newScale);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [exams]);
+
   // Sort exams by date
   const sortedExams = exams.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-transparent text-white bg-gray-600">
-      <div className="flex flex-col items-center justify-center p-12 rounded-xl bg-gray-500 bg-opacity-20 backdrop-blur-lg drop-shadow-lg">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-transparent text-white bg-gray-600 overflow-hidden">
+      <div id="countdown-container" className="flex flex-col items-center justify-center p-12 rounded-xl bg-gray-500 bg-opacity-20 backdrop-blur-lg drop-shadow-lg transform origin-top" style={{ transform: `scale(${scale})` }}>
         {sortedExams.map((exam, index) => {
           const timeLeft = new Date(exam.date).getTime() - new Date().getTime();
           const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
