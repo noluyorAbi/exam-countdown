@@ -109,194 +109,210 @@ export default function Home() {
 
   return (
     <>
-    <main className="flex flex-col items-center justify-center min-h-screen bg-transparent text-white bg-gray-600">
-      <div className="flex flex-col items-center justify-center p-12 rounded-xl bg-gray-500 bg-opacity-20 backdrop-blur-lg drop-shadow-lg w-full max-w-4xl">
-        <h1 className="text-4xl font-bold mb-4 text-gray-800">
-          Welcome to the Countdown App!
-        </h1>
-        <p className="mb-8 text-center text-gray-800">
-          I wrote this simple web app to make a custom counter for my Exams and
-          display them on my MacBook screen with{" "}
-          <Link
-            href={"https://github.com/sindresorhus/Plash"}
-            className="text-blue-500 hover:text-blue-800"
-          >
-            Plash
-          </Link>
-          . Instead of hardcoding the Countdown dates in my code, I wanted to make it
-          usable by anyone. Add your Countdowns and see the countdown to each one.
-        </p>
-        <p className="mb-8 text-center text-gray-800">
-          Dates will be highlighted:
-          <span className="text-white font-bold "> white</span> for upcoming
-          dates,
-          <span className="text-red-500 "> red</span> when they are less than 4
-          weeks away, and
-          <span className="text-red-500 animate-pulse"> pulsing red</span> when
-          they are less than 2 weeks away. Use the generated URL to share your
-          countdowns or set it as a background on macOS using the Plash app.
-        </p>
-        <form
-          className="w-full mb-8 flex flex-col items-center"
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleAddCountdown();
-          }}
-        >
-          <input
-            type="text"
-            placeholder="Countdown Name"
-            className="mb-4 p-2 rounded-md bg-gray-700 text-white"
-            value={newCountdown.name}
-            onChange={(e) => setNewCountdown({ ...newCountdown, name: e.target.value })}
-          />
-          <div
-            className="mb-4 p-2 rounded-md bg-gray-700 text-white cursor-pointer"
-            onClick={handleDateInputClick}
+      <main className="flex flex-col items-center justify-center min-h-screen bg-transparent text-white bg-gray-600">
+        <div className="flex flex-col items-center justify-center p-12 rounded-xl bg-gray-500 bg-opacity-20 backdrop-blur-lg drop-shadow-lg w-full max-w-4xl">
+          <h1 className="text-4xl font-bold mb-4 text-gray-800">
+            Welcome to the Countdown App!
+          </h1>
+          <p className="mb-8 text-center text-gray-800">
+            I wrote this simple web app to make a custom counter for my Exams
+            and display them on my MacBook screen with{" "}
+            <Link
+              href={"https://github.com/sindresorhus/Plash"}
+              className="text-blue-500 hover:text-blue-800"
+            >
+              Plash
+            </Link>
+            . Instead of hardcoding the Countdown dates in my code, I wanted to
+            make it usable by anyone. Add your Countdowns and see the countdown
+            to each one.
+          </p>
+          <p className="mb-8 text-center text-gray-800">
+            Dates will be highlighted:{" "}
+            <span className="text-white font-bold px-2 bg-gray-400">white</span>{" "}
+            for upcoming dates,
+            <span className="text-red-500 "> red</span> when they are less than
+            4 weeks away, and
+            <span className="text-red-500 animate-pulse">
+              {" "}
+              pulsing red
+            </span>{" "}
+            when they are less than 2 weeks away. Use the generated URL to share
+            your countdowns or set it as a background on macOS using the Plash
+            app.
+          </p>
+          <form
+            className="w-full mb-8 flex flex-col items-center"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleAddCountdown();
+            }}
           >
             <input
-              type="datetime-local"
-              className="bg-transparent text-white w-full focus:outline-none cursor-pointer"
-              value={newCountdown.date}
-              onChange={(e) => setNewCountdown({ ...newCountdown, date: e.target.value })}
-              ref={dateInputRef}
+              type="text"
+              placeholder="Countdown Name"
+              className="mb-4 p-2 rounded-md bg-gray-700 text-white"
+              value={newCountdown.name}
+              onChange={(e) =>
+                setNewCountdown({ ...newCountdown, name: e.target.value })
+              }
             />
-          </div>
-          <button
-            type="submit"
-            className="mb-4 p-3 rounded-md bg-green-500 text-white hover:bg-green-700 transition-colors duration-300 ease-in-out"
-          >
-            Add Countdown
-          </button>
-        </form>
-        <button
-          onClick={generateUrl}
-          className="p-3 rounded-md bg-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-700 text-white mb-10"
-        >
-          Generate URL
-        </button>
-        {sortedCountdowns.map((Countdown, index) => {
-          const timeLeft = new Date(Countdown.date).getTime() - new Date().getTime();
-          const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
-          const isLessThan2Weeks = timeLeft <= 2 * 7 * 24 * 60 * 60 * 1000;
-
-          const textClass = clsx({
-            "text-red-500": isLessThan4Weeks,
-            "animate-pulse": isLessThan2Weeks,
-          });
-
-          return (
             <div
-              key={index}
-              className="mb-16 text-center w-full flex items-center"
-              ref={(el) => {
-                countdownRefs.current[index] = el;
-              }}
+              className="mb-4 p-2 rounded-md bg-gray-700 text-white cursor-pointer"
+              onClick={handleDateInputClick}
             >
-              <div className="flex flex-col items-center justify-center w-full gap-4">
-                <h2 className={`mb-5 text-2xl font-semibold ${textClass}`}>
-                  {Countdown.name}
-                </h2>
-                <div className="flex flex-wrap items-center justify-center w-full gap-4">
-                  <div className="timer">
-                    <div
-                      className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
-                    >
-                      <h3 className="countdown-element days font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                        0
-                      </h3>
-                      <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
-                        Days
-                      </p>
+              <input
+                type="datetime-local"
+                className="bg-transparent text-white w-full focus:outline-none cursor-pointer"
+                value={newCountdown.date}
+                onChange={(e) =>
+                  setNewCountdown({ ...newCountdown, date: e.target.value })
+                }
+                ref={dateInputRef}
+              />
+            </div>
+            <button
+              type="submit"
+              className="mb-4 p-3 rounded-md bg-green-500 text-white hover:bg-green-700 transition-colors duration-300 ease-in-out"
+            >
+              Add Countdown
+            </button>
+          </form>
+          <button
+            onClick={generateUrl}
+            className="p-3 rounded-md bg-blue-500 transition-colors duration-300 ease-in-out hover:bg-blue-700 text-white mb-10"
+          >
+            Generate URL
+          </button>
+          {sortedCountdowns.map((Countdown, index) => {
+            const timeLeft =
+              new Date(Countdown.date).getTime() - new Date().getTime();
+            const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
+            const isLessThan2Weeks = timeLeft <= 2 * 7 * 24 * 60 * 60 * 1000;
+
+            const textClass = clsx({
+              "text-red-500": isLessThan4Weeks,
+              "animate-pulse": isLessThan2Weeks,
+            });
+
+            return (
+              <div
+                key={index}
+                className="mb-16 text-center w-full flex items-center"
+                ref={(el) => {
+                  countdownRefs.current[index] = el;
+                }}
+              >
+                <div className="flex flex-col items-center justify-center w-full gap-4">
+                  <h2 className={`mb-5 text-2xl font-semibold ${textClass}`}>
+                    {Countdown.name}
+                  </h2>
+                  <div className="flex flex-wrap items-center justify-center w-full gap-4">
+                    <div className="timer">
+                      <div
+                        className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                      >
+                        <h3 className="countdown-element days font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
+                          0
+                        </h3>
+                        <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
+                          Days
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="timer">
-                    <div
-                      className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
-                    >
-                      <h3 className="countdown-element hours font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                        0
-                      </h3>
-                      <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
-                        Hours
-                      </p>
+                    <div className="timer">
+                      <div
+                        className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                      >
+                        <h3 className="countdown-element hours font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
+                          0
+                        </h3>
+                        <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
+                          Hours
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="timer">
-                    <div
-                      className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
-                    >
-                      <h3 className="countdown-element minutes font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                        0
-                      </h3>
-                      <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
-                        Minutes
-                      </p>
+                    <div className="timer">
+                      <div
+                        className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                      >
+                        <h3 className="countdown-element minutes font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
+                          0
+                        </h3>
+                        <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
+                          Minutes
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="timer">
-                    <div
-                      className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
-                    >
-                      <h3 className="countdown-element seconds font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                        0
-                      </h3>
-                      <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
-                        Seconds
-                      </p>
+                    <div className="timer">
+                      <div
+                        className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
+                      >
+                        <h3 className="countdown-element seconds font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
+                          0
+                        </h3>
+                        <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
+                          Seconds
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <button
+                  onClick={() => handleDeleteCountdown(index)}
+                  className="ml-4 mt-4 p-2 rounded-md bg-red-500 text-white"
+                >
+                  Delete Countdown
+                </button>
               </div>
-              <button
-                onClick={() => handleDeleteCountdown(index)}
-                className="ml-4 mt-4 p-2 rounded-md bg-red-500 text-white"
-              >
-                Delete Countdown
-              </button>
-            </div>
-          );
-        })}
-      </div>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
-        contentLabel="Generated URL"
-        className="modal"
-        overlayClassName="overlay"
-      >
-        <h2 className="text-xl mb-4">Generated URL</h2>
-        <input
-          type="text"
-          value={generatedUrl}
-          readOnly
-          className="w-full p-2 mb-4 rounded-md bg-gray-200 text-gray-700"
-        />
-        <button
-          onClick={copyToClipboard}
-          className={`p-2 rounded-md text-white ${
-            copied ? "bg-green-500" : "bg-blue-500"
-          }`}
+            );
+          })}
+        </div>
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={() => setModalIsOpen(false)}
+          contentLabel="Generated URL"
+          className="modal"
+          overlayClassName="overlay"
         >
-          {copied ? "Successfully Copied ✓" : "Copy to Clipboard"}
-        </button>
-        <button
-          onClick={() => setModalIsOpen(false)}
-          className="p-2 rounded-md bg-red-500 text-white ml-2"
-        >
-          Close
-        </button>
-      </Modal>
+          <h2 className="text-xl mb-4">Generated URL</h2>
+          <input
+            type="text"
+            value={generatedUrl}
+            readOnly
+            className="w-full p-2 mb-4 rounded-md bg-gray-200 text-gray-700"
+          />
+          <button
+            onClick={copyToClipboard}
+            className={`p-2 rounded-md text-white ${
+              copied ? "bg-green-500" : "bg-blue-500"
+            }`}
+          >
+            {copied ? "Successfully Copied ✓" : "Copy to Clipboard"}
+          </button>
+          <button
+            onClick={() => setModalIsOpen(false)}
+            className="p-2 rounded-md bg-red-500 text-white ml-2"
+          >
+            Close
+          </button>
+        </Modal>
       </main>
       <footer className="flex  bottom-0 sticky items-center justify-center p-4 bg-gray-700 text-white w-full">
-        <span className="retro- cursor-default select-none">Created with <span className="hover:animate-pulse mx-1">❤️</span> by noluyorAbi</span>
+        <span className="retro- cursor-default select-none">
+          Created with <span className="hover:animate-pulse mx-1">❤️</span> by
+          noluyorAbi
+        </span>
         <a
           href="https://github.com/noluyorAbi"
           target="_blank"
           rel="noopener noreferrer"
           className="ml-2"
         >
-          <FaGithub size={24} className="hover:scale-110 transition duration-150" />
+          <FaGithub
+            size={24}
+            className="hover:scale-110 transition duration-150"
+          />
         </a>
       </footer>
     </>
