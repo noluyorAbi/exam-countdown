@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Modal from 'react-modal';
 
 interface Exam {
   name: string;
@@ -19,9 +20,14 @@ const calculateCountdown = (date: Date) => {
   return { days, hours, minutes, seconds };
 };
 
+// Set the app element for react-modal to the body element
+Modal.setAppElement('body');
+
 export default function Home() {
   const [exams, setExams] = useState<Exam[]>([]);
   const [newExam, setNewExam] = useState({ name: "", date: "" });
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [generatedUrl, setGeneratedUrl] = useState("");
   const router = useRouter();
 
   const handleAddExam = () => {
@@ -31,7 +37,14 @@ export default function Home() {
 
   const generateUrl = () => {
     const encodedData = encodeURIComponent(JSON.stringify(exams));
-    router.push(`/${encodedData}`);
+    const url = `${window.location.origin}/${encodedData}`;
+    setGeneratedUrl(url);
+    setModalIsOpen(true);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedUrl);
+    alert("URL copied to clipboard!");
   };
 
   return (
@@ -93,6 +106,27 @@ export default function Home() {
           );
         })}
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        contentLabel="Generated URL"
+        className="modal"
+        overlayClassName="overlay"
+      >
+        <h2 className="text-xl mb-4">Generated URL</h2>
+        <input
+          type="text"
+          value={generatedUrl}
+          readOnly
+          className="w-full p-2 mb-4 rounded-md bg-gray-200 text-gray-700"
+        />
+        <button onClick={copyToClipboard} className="p-2 rounded-md bg-blue-500 text-white">
+          Copy to Clipboard
+        </button>
+        <button onClick={() => setModalIsOpen(false)} className="p-2 rounded-md bg-red-500 text-white ml-2">
+          Close
+        </button>
+      </Modal>
     </main>
   );
 }
