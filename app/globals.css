@@ -31,4 +31,6 @@ input {
   color-scheme: dark;
 }
 
-
+html {
+  overflow: hidden;
+}
