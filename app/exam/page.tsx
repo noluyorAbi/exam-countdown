@@ -18,7 +18,7 @@ interface Countdown {
 const examDates: Exam[] = [
   { name: "Bayes Statistik", date: "23.07.2024 10:00:00" },
   { name: "RNVS Exam", date: "26.07.2024 12:00:00" },
-  { name: "JWT-Paper Vorversion", date: "06.07.2024 23:59:00" },
+  { name: "JWT-Paper Vorversion", date: "08.07.2024 23:59:00" },
   { name: "LiMo", date: "01.08.2024 12:15:00" },
   { name: "JWT-Paper Endversion", date: "20.07.2024 23:59:00" },
   { name: "JWT-Paper Kurzgutachten", date: "14.07.2024 23:59:00" },
