@@ -23,8 +23,8 @@ const calculateCountdown = (date: Date): Countdown => {
   const distance = date.getTime() - now.getTime();
 
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60));
+  const minutes = Math.floor((distance % (1000 * 60)) / (1000 * 60));
   const seconds = Math.floor((distance % 60000) / 1000);
 
   return { days, hours, minutes, seconds };
@@ -123,10 +123,12 @@ const CountdownPage = () => {
           const timeLeft = new Date(exam.date).getTime() - new Date().getTime();
           const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
           const isLessThan2Weeks = timeLeft <= 2 * 7 * 24 * 60 * 60 * 1000;
+          const isDone = timeLeft <= 0;
 
           const textClass = clsx({
-            "text-red-500": isLessThan4Weeks,
-            "animate-pulse": isLessThan2Weeks,
+            "text-red-500": !isDone && isLessThan4Weeks,
+            "animate-pulse": !isDone && isLessThan2Weeks,
+            "text-green-500": isDone,
           });
 
           return (

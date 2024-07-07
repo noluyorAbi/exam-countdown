@@ -107,7 +107,9 @@ export default function Home() {
 
   const handleSaveEditCountdown = (index: number) => {
     const updatedCountdowns = Countdowns.map((countdown, i) =>
-      i === index ? { ...countdown, date: editingDate, name: editingName } : countdown
+      i === index
+        ? { ...countdown, date: editingDate, name: editingName }
+        : countdown
     );
     setCountdowns(updatedCountdowns);
     setEditingIndex(null);
@@ -242,9 +244,7 @@ export default function Home() {
           >
             Generate URL
           </button>
-          <div className
-
-="mb-8 w-full">
+          <div className="mb-8 w-full">
             <h2 className="text-xl mb-4 text-gray-800">Edit URL</h2>
             <input
               type="text"
@@ -257,7 +257,7 @@ export default function Home() {
               onClick={parseCustomUrl}
               className="p-2 rounded-md text-white mb-4 bg-blue-500 hover:bg-blue-700 transition-colors duration-300 ease-in-out"
             >
-              Preview 
+              Preview
             </button>
 
             {isUrlEdited && (
@@ -298,10 +298,12 @@ export default function Home() {
               new Date(Countdown.date).getTime() - new Date().getTime();
             const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
             const isLessThan2Weeks = timeLeft <= 2 * 7 * 24 * 60 * 60 * 1000;
+            const isDone = timeLeft <= 0;
 
             const textClass = clsx({
-              "text-red-500": isLessThan4Weeks,
-              "animate-pulse": isLessThan2Weeks,
+              "text-red-500": !isDone && isLessThan4Weeks,
+              "animate-pulse": !isDone && isLessThan2Weeks,
+              "text-green-500": isDone,
             });
 
             return (
@@ -337,7 +339,9 @@ export default function Home() {
                     </>
                   ) : (
                     <>
-                      <h2 className={`mb-5 text-2xl font-semibold ${textClass}`}>
+                      <h2
+                        className={`mb-5 text-2xl font-semibold ${textClass}`}
+                      >
                         {Countdown.name}
                       </h2>
                       <div className="flex flex-wrap items-center justify-center w-full gap-4">
@@ -431,7 +435,9 @@ export default function Home() {
             onClick={copyToClipboard}
             className={`p-2 rounded-md text-white ${
               copied ? "bg-green-500" : "bg-blue-500"
-            } hover:${copied ? "bg-green-700" : "bg-blue-700"} transition-colors duration-300 ease-in-out`}
+            } hover:${
+              copied ? "bg-green-700" : "bg-blue-700"
+            } transition-colors duration-300 ease-in-out`}
           >
             {copied ? "Successfully Copied ✓" : "Copy to Clipboard"}
           </button>
