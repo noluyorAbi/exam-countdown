@@ -23,16 +23,15 @@ const calculateCountdown = (date: Date): Countdown => {
   const distance = date.getTime() - now.getTime();
 
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60));
-  const minutes = Math.floor((distance % (1000 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % 60000) / 1000);
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
   return { days, hours, minutes, seconds };
 };
 
 const getRandomErrorMessage = () => {
   const randomIndex = Math.floor(Math.random() * errorMessages.length);
-  console.log(randomIndex);
   return errorMessages[randomIndex];
 };
 
