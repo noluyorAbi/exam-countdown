@@ -16,6 +16,7 @@ interface CountdownTimer {
   hours: number;
   minutes: number;
   seconds: number;
+  isDone: boolean;
 }
 
 // Calculate countdown
@@ -23,14 +24,28 @@ const calculateCountdown = (date: Date): CountdownTimer => {
   const now = new Date();
   const distance = date.getTime() - now.getTime();
 
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(
-    (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  );
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % 60000) / 1000);
+  const isDone = distance < 0;
 
-  return { days, hours, minutes, seconds };
+  let absDistance = Math.abs(distance);
+
+  const days = Math.floor(absDistance / (1000 * 60 * 60 * 24));
+  absDistance -= days * (1000 * 60 * 60 * 24);
+
+  const hours = Math.floor(absDistance / (1000 * 60 * 60));
+  absDistance -= hours * (1000 * 60 * 60);
+
+  const minutes = Math.floor(absDistance / (1000 * 60));
+  absDistance -= minutes * (1000 * 60);
+
+  const seconds = Math.floor(absDistance / 1000);
+
+  return {
+    days: isDone ? -days : days,
+    hours: isDone ? -hours : hours,
+    minutes: isDone ? -minutes : minutes,
+    seconds: isDone ? -seconds : seconds,
+    isDone,
+  };
 };
 
 // Set the app element for react-modal to the body element
@@ -233,6 +248,8 @@ export default function Home() {
             </div>
             <button
               type="submit"
+
+
               className="mb-4 p-3 rounded-md bg-green-500 text-white hover:bg-green-700 transition-colors duration-300 ease-in-out"
             >
               Add Countdown
@@ -294,16 +311,15 @@ export default function Home() {
             )}
           </div>
           {sortedCountdowns.map((Countdown, index) => {
-            const timeLeft =
-              new Date(Countdown.date).getTime() - new Date().getTime();
-            const isLessThan4Weeks = timeLeft <= 4 * 7 * 24 * 60 * 60 * 1000;
-            const isLessThan2Weeks = timeLeft <= 2 * 7 * 24 * 60 * 60 * 1000;
-            const isDone = timeLeft <= 0;
-
+            const date = new Date(Countdown.date);
+            const countdown = calculateCountdown(date);
+            const isLessThan4Weeks = countdown.isDone && countdown.days >= -28;
+            const isLessThan2Weeks = countdown.isDone && countdown.days >= -14;
+            
             const textClass = clsx({
-              "text-red-500": !isDone && isLessThan4Weeks,
-              "animate-pulse": !isDone && isLessThan2Weeks,
-              "text-green-500": isDone,
+              "text-red-500": !countdown.isDone && countdown.days <= 28,
+              "animate-pulse": !countdown.isDone && countdown.days <= 14,
+              "text-green-500": countdown.isDone,
             });
 
             return (
@@ -350,7 +366,7 @@ export default function Home() {
                             className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
                           >
                             <h3 className="countdown-element days font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                              0
+                              {countdown.days}
                             </h3>
                             <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                               Days
@@ -362,7 +378,7 @@ export default function Home() {
                             className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
                           >
                             <h3 className="countdown-element hours font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                              0
+                              {countdown.hours}
                             </h3>
                             <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                               Hours
@@ -374,7 +390,7 @@ export default function Home() {
                             className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
                           >
                             <h3 className="countdown-element minutes font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                              0
+                              {countdown.minutes}
                             </h3>
                             <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                               Minutes
@@ -386,7 +402,7 @@ export default function Home() {
                             className={`rounded-xl bg-black/25 backdrop-blur-sm py-3 min-w-[64px] sm:min-w-[80px] md:min-w-[96px] flex items-center justify-center flex-col gap-1 px-3 ${textClass}`}
                           >
                             <h3 className="countdown-element seconds font-manrope font-semibold text-lg sm:text-xl md:text-2xl text-center">
-                              0
+                              {countdown.seconds}
                             </h3>
                             <p className="text-xs sm:text-sm md:text-lg uppercase font-normal mt-1 text-center w-full">
                               Seconds
@@ -452,7 +468,9 @@ export default function Home() {
       <footer className="flex bottom-0 sticky items-center justify-center p-4 bg-gray-700 text-white w-full">
         <span className="retro- cursor-default select-none">
           Created with <span className="hover:animate-pulse mx-1">❤️</span> by
-          noluyorAbi
+          noluyor
+
+Abi
         </span>
         <a
           href="https://github.com/noluyorAbi"

@@ -20,12 +20,21 @@ interface Countdown {
 // Calculate countdown
 const calculateCountdown = (date: Date): Countdown => {
   const now = new Date();
-  const distance = date.getTime() - now.getTime();
+  let distance = date.getTime() - now.getTime();
 
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  const isDone = distance < 0;
+  let absDistance = Math.abs(distance);
+
+  const days = Math.floor(absDistance / (1000 * 60 * 60 * 24)) * (isDone ? -1 : 1);
+  absDistance -= Math.abs(days) * (1000 * 60 * 60 * 24);
+
+  const hours = Math.floor(absDistance / (1000 * 60 * 60)) * (isDone ? -1 : 1);
+  absDistance -= Math.abs(hours) * (1000 * 60 * 60);
+
+  const minutes = Math.floor(absDistance / (1000 * 60)) * (isDone ? -1 : 1);
+  absDistance -= Math.abs(minutes) * (1000 * 60);
+
+  const seconds = Math.floor(absDistance / 1000) * (isDone ? -1 : 1);
 
   return { days, hours, minutes, seconds };
 };
