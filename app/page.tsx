@@ -103,7 +103,7 @@ export default function Home() {
       const url = `${window.location.origin}/${encodedData}`;
       setLiveEditedUrl(url);
     }
-  }, [parsedUrl]);
+  }, [parsedUrl, isUrlEdited]);
 
   const handleAddCountdown = () => {
     setCountdowns([...Countdowns, newCountdown]);
@@ -131,6 +131,7 @@ export default function Home() {
     setEditingDate("");
     setEditingName("");
     setParsedUrl(updatedCountdowns);
+    setIsUrlEdited(true);
   };
 
   const generateUrl = () => {
@@ -248,8 +249,6 @@ export default function Home() {
             </div>
             <button
               type="submit"
-
-
               className="mb-4 p-3 rounded-md bg-green-500 text-white hover:bg-green-700 transition-colors duration-300 ease-in-out"
             >
               Add Countdown
@@ -315,7 +314,7 @@ export default function Home() {
             const countdown = calculateCountdown(date);
             const isLessThan4Weeks = countdown.isDone && countdown.days >= -28;
             const isLessThan2Weeks = countdown.isDone && countdown.days >= -14;
-            
+
             const textClass = clsx({
               "text-red-500": !countdown.isDone && countdown.days <= 28,
               "animate-pulse": !countdown.isDone && countdown.days <= 14,
@@ -468,9 +467,7 @@ export default function Home() {
       <footer className="flex bottom-0 sticky items-center justify-center p-4 bg-gray-700 text-white w-full">
         <span className="retro- cursor-default select-none">
           Created with <span className="hover:animate-pulse mx-1">❤️</span> by
-          noluyor
-
-Abi
+          noluyor Abi
         </span>
         <a
           href="https://github.com/noluyorAbi"
